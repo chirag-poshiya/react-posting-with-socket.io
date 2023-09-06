@@ -72,13 +72,14 @@ class Feed extends Component {
     }
     const graphqlQuery = {
       query: `
-        {
-          posts(page: ${page}){
-            posts{
+        query FetchPosts($page: Int) {
+          posts(page: $page) {
+            posts {
               _id
               title
               content
-              creator{
+              imageUrl
+              creator {
                 name
               }
               createdAt
@@ -86,8 +87,11 @@ class Feed extends Component {
             totalPosts
           }
         }
-      `
-    }
+      `,
+      variables: {
+        page: page
+      }
+    };
     fetch('http://localhost:8080/graphql', {
       method: "POST",
       headers: {
@@ -121,12 +125,15 @@ class Feed extends Component {
     event.preventDefault();
     const graphqlQuery = {
       query: `
-        mutation{
-          updateStatus(status: "${this.state.status}"){
+        mutation UpdateUserStatus($userStatus: String){
+          updateStatus(status: $userStatus){
               status
           }
         }
-      `
+      `,
+      variables: {
+        userStatus: this.state.status
+      }
     }
     fetch('http://localhost:8080/graphql', {
       method: "POST",
